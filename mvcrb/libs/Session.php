@@ -28,44 +28,42 @@ class Session {
             return true;
         }
         $SessionsDir = SITE_DIR . 'usersessions';
-//        ini_set("session.gc_probability", 30); /* Можно настроить на 100%, если у вас там нет никакого медленного кода */
-//        ini_set("session.gc_divisor", 100);
-//        ini_set("session.gc_maxlifetime", 3600); /* Время жизни сессии в секундах (то самое, которое передается в функцию gc) */
+        ini_set("session.gc_probability", 30); /* Можно настроить на 100%, если у вас там нет никакого медленного кода */
+        ini_set("session.gc_divisor", 100);
+        ini_set("session.gc_maxlifetime", 3600); /* Время жизни сессии в секундах (то самое, которое передается в функцию gc) */
         session_save_path($SessionsDir);
-//session_name(SESSION_PREFIX);
 //        session_name(self::$sessionName);
 //        session_id(self::$sessionName);
-//        // Forces sessions to only use cookies.
-//        if (ini_set('session.use_only_cookies', 1) === FALSE) {
-//            //header("Location: ../error.php?err=Could not initiate a safe session (ini_set)");
-//            exit('SecSessionStart(): Could not initiate a safe session (ini_set)');
-//        }
-        // Gets current cookies params.
-//        $cookieParams = session_get_cookie_params();
-//        session_set_cookie_params($cookieParams["lifetime"], $cookieParams["path"], $cookieParams["domain"], false);
+
+        if (ini_set('session.use_only_cookies', 1) === FALSE) {
+            exit('SecSessionStart(): Could not initiate a safe session (ini_set)');
+        }
+
+        $cookieParams = session_get_cookie_params();
+        session_set_cookie_params($cookieParams["lifetime"], $cookieParams["path"], $cookieParams["domain"], false);
         
-//$handler = new FileSessionHandler();
-//        session_set_save_handler(
-//                array($handler, 'open'),
-//                array($handler, 'close'),
-//                array($handler, 'read'),
-//                array($handler, 'write'),
-//                array($handler, 'destroy'),
-//                array($handler, 'gc')
-//        );
+        $handler = new FileSessionHandler();
+        session_set_save_handler(
+                array($handler, 'open'),
+                array($handler, 'close'),
+                array($handler, 'read'),
+                array($handler, 'write'),
+                array($handler, 'destroy'),
+                array($handler, 'gc')
+        );
         if(session_status() === PHP_SESSION_NONE) session_start();            // Start the PHP session 
 //        session_regenerate_id();    // regenerated the session, delete the old one. 
 //        
-//        $BrowserHesh = self::get('BrowserHesh');
-//        if($BrowserHesh){
-//            
-//            $browser = mvcrb::BrouserHash();
-////            dd($browser.' '.$BrowserHesh);
-//            if($browser!==$BrowserHesh){
-//    //            dd($browser.' '.$BrowserHesh);
-//                self::Destroy();
-//            }
-//        }
+        $BrowserHesh = self::get('BrowserHesh');
+        if($BrowserHesh){
+            
+            $browser = mvcrb::BrouserHash();
+//            dd($browser.' '.$BrowserHesh);
+            if($browser!==$BrowserHesh){
+    //            dd($browser.' '.$BrowserHesh);
+                self::Destroy();
+            }
+        }
     }
 
     public static function init() {
@@ -203,24 +201,6 @@ class Session {
 //            setcookie(session_name(), '', 0, '/');
 
             session_abort();
-        }
-    }
-
-    /**
-     * Display a one time message, then clear if from the session.
-     *
-     * @param  string $sessionName default session name
-     * @return string
-     */
-    public static function message($sessionName = 'success') {
-        $msg = Session::pull($sessionName);
-        if (!empty($msg)) {
-            return "<div class='alert alert-success alert-dismissable'>
-                    <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>×</button>
-                    <h4><i class='fa fa-check'></i> " . $msg . "</h4>
-                  </div>";
-        } else {
-            return null;
         }
     }
 

@@ -48,7 +48,7 @@
             </div>
 
             <div class="p-1">
-                <div class="btn-group d-flex flex-wrap" role="group" aria-label="Basic example">
+                <div class="btn-group d-flex flex-wrap" role="group">
                     <div class="btn-group mr-2" role="group">
                         <button type="button" class="btn btn-info" @click.prevent="setPage(1)"><i class="fas fa-angle-double-left"></i></button>
                         <button type="button" class="btn btn-info" @click.prevent="setPage(currentPage-1)"><i class="fas fa-angle-left"></i></button>
@@ -87,7 +87,7 @@
                             <th>Инструменты</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody v-if="LoadingData">
                     
                         <tr v-for="(item, idx) in Data" :key="idx">
                             <th>{{item.id}}</th>
@@ -318,29 +318,31 @@
 
         methods: {
             setPage(p) {
-            if (p > this.paginator.count)
-                p = this.paginator.count;
-            if (p < 1)
-                p = 1;
+                this.LoadingData = false;
+                if (p > this.paginator.count)
+                    p = this.paginator.count;
+                if (p < 1)
+                    p = 1;
 
-            this.currentPage = p;
-            fetch('/admin/user/list/?AJAX=1', {
-                mode: 'cors',
-                method: 'POST',
-                cache: 'no-cache',
-                credentials: 'same-origin',
-                body: JSON.stringify({start: (p - 1) * this.perPage, limit: this.perPage, data: this.currentSort, dir: this.currentSortDir})
-            })
-            .then(res => res.json())
-            .then(res => {
-                this.Data = res.data;
-//                  if(this.search.length>0){
-//                      this.TaskCount = res.Scount;
-//                  }else{
-//                      this.TaskCount=res.count;
-//                  }
+                this.currentPage = p;
+                fetch('/admin/user/list/?AJAX=1', {
+                    mode: 'cors',
+                    method: 'POST',
+                    cache: 'no-cache',
+                    credentials: 'same-origin',
+                    body: JSON.stringify({start: (p - 1) * this.perPage, limit: this.perPage, data: this.currentSort, dir: this.currentSortDir})
+                })
+                .then(res => res.json())
+                .then(res => {
+                    this.Data = res.data;
+    //                  if(this.search.length>0){
+    //                      this.TaskCount = res.Scount;
+    //                  }else{
+    //                      this.TaskCount=res.count;
+    //                  }
 
-                this.Count = res.count;
+                    this.Count = res.count;
+                    this.LoadingData = true;
 //                    console.log(res);
             });
             },

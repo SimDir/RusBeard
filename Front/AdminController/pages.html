@@ -1,10 +1,10 @@
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.7.4/tinymce.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vue-easy-tinymce/dist/vue-easy-tinymce.min.js"></script>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.7.4/tinymce.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue-easy-tinymce/dist/vue-easy-tinymce.min.js"></script>-->
 <!--
 https://vuejsexamples.com/a-simple-and-powerful-package-for-easy-usage-of-tinymce-in-vue-js-project/
 https://codemirror.net/doc/manual.html
 -->
-<script src="https://cdn.jsdelivr.net/npm/vue-codemirror@4.0.6/dist/vue-codemirror.min.js"></script>
+<!--<script src="https://cdn.jsdelivr.net/npm/vue-codemirror@4.0.6/dist/vue-codemirror.min.js"></script>-->
 
 
 <div id="pagelist">
@@ -175,8 +175,8 @@ https://codemirror.net/doc/manual.html
                     </button>
                 </div>
                 <!--<div class="modal-body">-->
-                <codemirror v-model="Page.content"></codemirror>
-                    <tinymce v-model="Page.content" :plugins="myPlugins" :other="myOtherOptions"></tinymce>
+<!--                <codemirror v-model="Page.content"></codemirror>
+                    <tinymce v-model="Page.content" :plugins="myPlugins" :other="myOtherOptions"></tinymce>-->
                 <!--</div>-->
 <!--                <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -188,31 +188,10 @@ https://codemirror.net/doc/manual.html
 
 </div>
 <script>
-
-
-    Vue.component('tinymce', VueEasyTinyMCE);
-    
     var pagelist = new Vue({
         el: '#pagelist',
 
         data: {
-            myPlugins:[
-//                'advlist autolink lists link image charmap print preview anchor textcolor',
-                'searchreplace visualblocks code fullscreen',
-                'insertdatetime media table contextmenu paste code directionality template colorpicker textpattern'
-            ],
-            myOtherOptions:{
-                height: 400,
-                templates: [
-                    {title: 'Test template 1', content: 'Test 1'},
-                    {title: 'Test template 2', content: 'Test 2'}
-                ]
-                //,content_css: 'css/tinymce-content.css'
-                //,width:600,
-                //directionality: 'rtl',
-                //theme: 'modern',
-                //menubar: false
-            },
             Data: {}, Count: 0,
             errors:null,id:null,success:false,
             Page: {id:0,content:'hello world',type:'notpublic'},

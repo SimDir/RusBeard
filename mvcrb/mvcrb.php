@@ -362,6 +362,7 @@ class mvcrb {
         }
     }
     public static function BrouserHash() {
-        return md5($_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']);
+//        dd($_SERVER);
+        return md5($_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT'] . $_SERVER['HTTP_ACCEPT_LANGUAGE']);
     }
 }

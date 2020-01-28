@@ -36,16 +36,31 @@ class AdminController extends Controller {
 
     public function UpdateAction($param = null) {
         $FileName = null;
-        foreach (glob(mvcrb::Config()['App_Controllers_Dir'] . '*Controller.php') as $file) {
-            //$LastModified[] = filemtime($file); // массив файлов со временем изменения файла
-            $FileName[] = $file; // массив всех файлов
-        }
+        $dirFile = mvcrb::Config()['App_Controllers_Dir'] . '*Controller.php';
+        $this->scanDir($dirFile, $FileName );
         dd($FileName);
     }
-
+    private function scanDir($dirFile,&$FileName) {
+        foreach (glob($dirFile) as $file) {
+//            echo $file . PHP_EOL;
+//            if(is_dir($file)){
+//                
+//                if($file!==$dirFile){
+//                    dd($file);
+//                    $this->scanDir($file, $FileName);
+//                }
+//                
+//            }
+            $FileName[] = $file; // массив всех файлов
+        }
+        return $FileName;
+    }
     public function IndexAction() {
         
         $this->View->admincontent = $this->View->execute('main.html');
+        if($this->POST){
+            return ['Content'=>$this->View->admincontent];
+        }
         $this->View->content = $this->View->execute('AdminWraper.html');
         return $this->View->execute('index.html', TEMPLATE_DIR);
     }
@@ -109,6 +124,9 @@ class AdminController extends Controller {
 //            return $CollCom;
         }
         $this->View->admincontent = $this->View->execute('users.html');
+        if($this->POST){
+            return ['Content'=>$this->View->admincontent];
+        }
         $this->View->content = $this->View->execute('AdminWraper.html');
         return $this->View->execute('index.html', TEMPLATE_DIR);
     }
@@ -135,6 +153,9 @@ class AdminController extends Controller {
 
     public function PagesAction() {
         $this->View->admincontent = $this->View->execute('pages.html');
+        if ($this->POST) {
+            return ['Content' => $this->View->admincontent];
+        }
         $this->View->content = $this->View->execute('AdminWraper.html');
         return $this->View->execute('index.html', TEMPLATE_DIR);
     }
