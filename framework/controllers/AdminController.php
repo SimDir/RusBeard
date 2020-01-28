@@ -34,31 +34,21 @@ class AdminController extends Controller {
         $this->View->title = 'Админка';
     }
 
-    public function UpdateAction($param = null) {
-        $output = shell_exec('git add .');
-        $output = shell_exec('git commit -am "Авто соммит системы от '.date('Y-m-d H:i:s').'"');
-        $output = shell_exec('git push');
-        return  $output;
-//        $FileName = null;
-//        $dirFile = mvcrb::Config()['App_Controllers_Dir'] . '*Controller.php';
-//        $this->scanDir($dirFile, $FileName );
-//        dd($FileName);
-    }
-    private function scanDir($dirFile,&$FileName) {
-        foreach (glob($dirFile) as $file) {
-//            echo $file . PHP_EOL;
-//            if(is_dir($file)){
-//                
-//                if($file!==$dirFile){
-//                    dd($file);
-//                    $this->scanDir($file, $FileName);
-//                }
-//                
-//            }
-            $FileName[] = $file; // массив всех файлов
+    public function UpdateAction($param = null) {        
+        $directory = new \RecursiveDirectoryIterator(mvcrb::Config()['App_Controllers_Dir']);
+        $iterator = new \RecursiveIteratorIterator($directory);
+        $files = [];
+        foreach ($iterator as $info) {
+            if (is_file($info->getPathname())) {
+                $files[] = basename($info->getPathname(),'Controller.php');
+            }
+
         }
-        return $FileName;
+//        dd($files);
+
+        return $files;
     }
+
     public function IndexAction() {
         
         $this->View->admincontent = $this->View->execute('main.html');
