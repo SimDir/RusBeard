@@ -35,10 +35,14 @@ class AdminController extends Controller {
     }
 
     public function UpdateAction($param = null) {
-        $FileName = null;
-        $dirFile = mvcrb::Config()['App_Controllers_Dir'] . '*Controller.php';
-        $this->scanDir($dirFile, $FileName );
-        dd($FileName);
+        $output = shell_exec('git add .');
+        $output = shell_exec('git commit -am "Авто соммит системы от '.date('Y-m-d H:i:s').'"');
+        $output = shell_exec('git push');
+        return  $output;
+//        $FileName = null;
+//        $dirFile = mvcrb::Config()['App_Controllers_Dir'] . '*Controller.php';
+//        $this->scanDir($dirFile, $FileName );
+//        dd($FileName);
     }
     private function scanDir($dirFile,&$FileName) {
         foreach (glob($dirFile) as $file) {

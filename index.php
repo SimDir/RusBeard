@@ -31,7 +31,7 @@ define('SESSION_PREFIX', 'RusBeard_session_');
 define('DS', DIRECTORY_SEPARATOR); // разделитель для путей к файлам
 define('ROOT', dirname(__FILE__)); // защита всех файлов приложения от прямого доступа к ним
 define('SITE_DIR', realpath(dirname(__FILE__)) . DS); // путь к корневой папке сайта getcwd()
-define('APP', SITE_DIR . 'mvcrb' . DS); // путь к приложению
+define('APP', SITE_DIR . 'framework' . DS); // путь к приложению
 //define('TEMPLATE_DIR', SITE_DIR . 'portal' . DS . 'dist' . DS); // путь до файлов до шаблонами
 define('TEMPLATE_DIR', SITE_DIR . 'Front' . DS);
 
@@ -44,7 +44,7 @@ define ('COMPOSER', SITE_DIR.'vendor'.DS.'autoload.php');
 if(file_exists(COMPOSER)){
     require_once COMPOSER; // подключаем композер
 }else{
-    die('на сервере отсутствует дириктория "vendor" а это значит "Composer" не установлен! продолжить невозможно. установите composer и обновите бибилиотеки. https://getcomposer.org/');
+    die('Отсутствует директория "vendor" а это значит "Composer" не установлен! продолжить невозможно. установите composer и бибилиотеки зависимостей. https://getcomposer.org/');
 }
 require_once APP . 'mvcrb.php';
 mvcrb\mvcrb::Run();

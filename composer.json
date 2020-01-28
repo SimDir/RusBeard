@@ -1,5 +1,7 @@
 {
+    "description": "Russes republic software developers team",
     "name": "simdir/rusbeard",
+    "type": "project",
     "require": {
         "filp/whoops": "^2.5",
         "monolog/monolog": "^2.0",
