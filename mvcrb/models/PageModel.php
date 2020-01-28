@@ -15,13 +15,7 @@ class PageModel extends Model {
 
     public function __construct() {
         parent::__construct();
-        Session::init();
-        $lng = Session::get('language');
-        if (is_null($lng)) {
-            $lng = '';
-        }
-        $this->TableName = $lng.'page';
-//        dd($this->TableName);
+        $this->TableName = 'page';
     }
 
     public function GetList($PostData = null) {
