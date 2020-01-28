@@ -1,0 +1,17 @@
+<{ Addcss(/public/css/style.css) }>
+<{ Controller(index:header) }>
+<{ View(IndexController/navbar.html) }>
+
+<div class="d-flex justify-content-start">
+    <div class="order-1 mr-1">
+        <{ View(IndexController/LSidebar.html) }>
+    </div>
+    <div class="order-2 p-2 editable">
+        <{ content }>
+    </div>
+    <script>var editor = new MediumEditor('.editable');</script>
+    <!--<div class="order-3">Third flex item</div>-->
+</div>
+
+    
+<{ View(IndexController/footer.html) }>

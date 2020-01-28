@@ -1,0 +1,728 @@
+<div id="UserManagement">
+
+    <div v-if="UserEdit" class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <h5>Привет {{ User.name }}. Редактируется пользователь <b class="text-success">{{ UserEdit.login }}</b>!</h5>
+                <!--{{this.perPage}} {{this.currentPage}} {{this.pagination.startIndex}} {{this.pagination.endIndex}} <br>https://navy-test.afanik.ru{{this.UrlF}}-->
+            </div>
+            
+        </div>
+        <div v-if="!EditCam && !EditObj" class="row">
+            <div class="col">
+                <table  class="table table-striped">
+                    <thead class="black white-text">
+                        <tr>
+                            <th colspan="2">
+                                <div> 
+                                    <button @click="UserEdit=false" type="button" class="btn btn-danger btn-sm">
+                                        Назад
+                                    </button>
+                                    <button @click="SaveUser" v-if="UserEdit['id']>0" type="button" class="btn btn-green btn-sm">
+                                        Сохранить
+                                    </button>
+                                    <button @click="AddUser" v-else type="button" class="btn btn-green btn-sm">
+                                        Добавить
+                                    </button>
+                                    <button @click="SetUserObjEdit" v-if="UserEdit['id']>0" type="button" class="btn btn-cyan btn-sm">
+                                        Объекты
+                                    </button>
+                                    <button @click="SetUserCamEdit" v-if="UserEdit['id']>0" type="button" class="btn btn-cyan btn-sm">
+                                        Камеры
+                                    </button>
+                                </div>
+                            </th>
+
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr>
+                            <td>
+                                И.О.Ф.*
+                            </td>
+                            <td class="row">
+                                <input v-model="UserEdit['name']" name="name" type="text" id="defaultForm-email" class="form-control col" placeholder="Имя">
+                                <input v-model="UserEdit['middlename']" name="middlename" type="text" id="defaultForm-email" class="form-control col" placeholder="Отчество">
+                                <input v-model="UserEdit['surname']" name="surname" type="text" id="defaultForm-email" class="form-control col" placeholder="Фамилия">
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td>
+                                Логин** Почта Телефон
+                            </td>
+                            <td class="row">
+                                <input v-model="UserEdit['login']" name="login" type="text" id="defaultForm-email" class="form-control col" placeholder="login обязательно к заполнению">
+                                <input v-model="UserEdit['email']" name="email" type="text" id="defaultForm-email" class="form-control col" placeholder="Электронная почта. не обязательно к заполнению">
+                                <input v-model="UserEdit['phone']" name="phone" type="text" id="defaultForm-email" class="form-control col" placeholder="Номер телефона. не обязательно к заполнению">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Пароль***<br>Уровень доступа
+                            </td>
+
+                            <td class="row">
+                                <input v-model="UserEdit['password']" name="role" type="text" id="defaultForm-email" class="form-control border border-danger col" >
+                                <!--                        <input v-model="UserEdit['role']" name="role" type="text" id="defaultForm-email" class="form-control col" >-->
+                                <select v-model="UserEdit['role']" name="role" class="form-control col">
+                                    <option value="100">Пользователь 100</option>
+                                    <option value="200">Специальный пользователь 200</option>
+                                    <option value="300">Техническая поддержка 300</option>
+                                    <!--<option value="400">Операторы данных 400</option>-->
+                                    <!--                            <option value="500">ФСБ</option>
+                                                                <option value="600">Редактор пользователей</option>
+                                                                <option value="700">Редактор обектов</option>
+                                                                <option value="800">Редактор камер</option>-->
+                                    <option value="900">Администратор 900</option>
+                                    <option v-if="+User.role > +950" value="999">Dev</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="2"> 
+                                * - Имя Отчество Фамилия. первым идет Имя вторым Отчество третим Фамилия
+                                в по правилам культуры Человека Имя идет первым а все остальное после. Имя существительное - часть речи, которая обозначает объект и отвечает на вопросы кто?
+                                пишут Владимир Путин(В.В.Путин а не Путин В.В.)<br>
+                                ** - Логин обязательно доля заполнения<br>
+                                <i v-if="UserEdit['id']>0" class="text-danger">*** - если оставить поле для ввода пароля пустым то пороль не будет изменнен и останется старым. если ввести пароль то он поменяется у пользователя.</i>
+
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+        </div>
+        
+        <div v-if="EditObj" class="row">
+            <div class="col-12 row"> 
+                <div class="col-6">
+                    <div class="btn-group row">
+                        <button @click="EditObj=false" type="button" class="btn btn-danger btn-sm col-4 mr-2">
+                        Назад
+                        </button>
+                        <input v-model="SearchObjU" name="FindNameObjU" type="text" class="form-control col-6" placeholder="найти объект">
+                    </div>
+                </div>
+                
+                <div class="col-6">
+                    <input v-model="SearchObj" name="FindNameObj" type="text" class="form-control col-4" placeholder="найти объект">
+                </div>
+            </div>
+            <div class="col-6 border" style="overflow-y: scroll; height:80vh;">
+                <table id="UserObjTable"  class="table table-striped">
+                    <thead class="black white-text">
+                        
+                        <tr> 
+                            <th>id</th> 
+                            <th>Имя</th>
+                            <th>Адресс</th>
+
+                        </tr> 
+                    </thead>
+                    
+                    <tbody>
+                        
+                        <tr v-for="(Obj, index) in UserObjListS">
+                            <td>
+                                <b style="cursor: pointer;" @click="DelUserObj(Obj.id)" class="text-danger"><i class="fas fa-minus"></i></b>
+                                {{ Obj.id}}
+                            </td>
+                            <td>
+                                {{ Obj.name }}
+                            </td>
+                            <td>
+                                {{ Obj.address }}
+                            </td>
+                        </tr>
+                        
+                    </tbody>
+                    
+                </table>
+                
+            </div>
+            <div class="col-6 border" style="overflow-y: scroll; height:80vh;">
+                <table  class="table table-striped">
+                    <thead class="black white-text"> 
+                        <tr> 
+                            <th>id</th> 
+                            <th>Имя</th>
+                            <th>Адресс</th>
+
+                        </tr> 
+                    </thead>
+                    <tbody>
+
+                        <tr v-for="(Obj, index) in ObjListS">
+                            <td>
+                                <b style="cursor: pointer;" @click="AddUserObj(Obj.id)" class="text-success"><i class="fas fa-plus"></i></b>
+                                {{ Obj.id}}
+                            </td>
+                            <td>
+                                {{ Obj.name }}
+                            </td>
+                            <td>
+                                {{ Obj.address }}
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div v-if="EditCam" class="row">
+            <div class="col-12 row"> 
+                <div class="col-6">
+                    <div class="btn-group row">
+                        <button @click="EditCam=false" type="button" class="btn btn-danger btn-sm col-4 mr-2">
+                            Назад
+                        </button>
+                        <input v-model="SearchCam" name="FindNameObjU" type="text" class="form-control col-6" placeholder="найти камеру">
+                    </div>
+                </div>
+                <div class="col-6" >
+                    <input v-if="!CamListShow" v-model="SearchObj" name="FindNameObj" type="text" class="form-control col-4" placeholder="найти объект">
+                    <button v-if="CamListShow" @click="CamListShow=false" type="button" class="btn btn-danger btn-sm">
+                        <b style="cursor: pointer;"  class="text-warning"><i class="fas fa-long-arrow-alt-left"></i></b>
+                        Назад к списку объектов 
+                    </button>
+                    
+                </div>
+                <!--                <div class="col">
+                                    <input v-model="search" @change.prevent="FindObj" name="FindNameObj" type="text" id="defaultForm-email" class="form-control col-4" placeholder="найти объект">
+                                </div>-->
+            </div>
+            <div class="col-6 border" style="overflow-y: scroll; height:80vh;">
+                <table id="UserObjTable"  class="table table-striped">
+                    <thead class="black white-text">
+
+                        <tr> 
+                            <th>id</th> 
+                            <th>Имя</th>
+                            <th>MAC Адресс</th>
+
+                        </tr> 
+                    </thead>
+
+                    <tbody>
+
+                        <tr v-for="(Cam, index) in UserCamList">
+                            <td>
+                                <b style="cursor: pointer;" @click="DelUserCam(Cam.id)" class="text-danger"><i class="fas fa-minus"></i></b>
+                                {{ Cam.id}}
+                            </td>
+                            <td>
+                                {{ Cam.name }}
+                            </td>
+                            <td>
+                                {{ Cam.macaddress }}
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+            <div v-if="!CamListShow" class="col-6 border" style="overflow-y: scroll; height:80vh;">
+                <table  class="table table-striped">
+                    <thead class="black white-text"> 
+                        <tr> 
+                            <th>id</th> 
+                            <th>Имя</th>
+                            <th>Адресс</th>
+
+                        </tr> 
+                    </thead>
+                    <tbody>
+
+                        <tr v-for="(Obj, index) in ObjListS">
+                            <td>
+                                <b style="cursor: pointer;" @click="LoadCamObj(Obj.id)" class="text-success"><i class="fas fa-plus"></i></b>
+                                {{ Obj.id}}
+                            </td>
+                            <td>
+                                {{ Obj.name }}
+                            </td>
+                            <td>
+                                {{ Obj.address }}
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+            <div v-if="CamListShow" class="col-6 border" style="overflow-y: scroll; height:80vh;">
+                <table  class="table table-striped">
+                    <thead class="black white-text"> 
+                        <tr> 
+                            <th>id</th> 
+                            <th>Имя</th>
+                            <th>МАК Адресс</th>
+
+                        </tr> 
+                    </thead>
+                    <tbody>
+
+                        <tr v-for="(Cam, index) in CamList">
+                            <td>
+                                <b style="cursor: pointer;" @click="AddUserCam(Cam.id)" class="text-success"><i class="fas fa-plus"></i></b>
+                                {{ Cam.id}}
+                            </td>
+                            <td>
+                                {{ Cam.name }}
+                            </td>
+                            <td>
+                                {{ Cam.macaddress }}
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div v-if="!UserEdit" class="container-fluid">
+    
+        <div class="row">
+            <div class="col">
+                <h5>Привет {{ User.name }}. Работа с пользователями!</h5>
+                <!--{{this.perPage}} {{this.currentPage}} {{this.pagination.startIndex}} {{this.pagination.endIndex}} <br>https://navy-test.afanik.ru{{this.UrlF}}-->
+            </div>
+            
+        </div>
+        <div class="row">
+            <div class="col-12">
+
+                <div class="btn-toolbar" >
+                    <div class="btn-group mr-2" role="group">
+                        <select class="custom-select mr-2" v-model.number="perPage" @change.prevent="setPage(1)">
+
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="75">75</option>
+                            <option value="100">100</option>
+                            <option value="200">200</option>
+                            <option value="300">300</option>
+                            <option value="500">500</option>
+                            <option value="1000">1000</option>
+                        </select>
+                        <input v-model="search" @keyup.prevent="DBSearch" name="search" type="text" id="search" class="form-control mr-2" >
+                        <button type="button" class="btn btn-amber btn-sm"  @click.prevent="DBSearch">
+                            <i class="fas fa-search"></i>
+                        </button> 
+                        <button type="button" class="btn btn-green btn-sm" title="Добавить нового пользователя"  @click="SetUserEditor(0)">
+                            <i class="fas fa-user-plus"></i>
+                        </button> 
+                        
+                    </div>
+
+                    <div class="btn-group btn-sm" role="group" style="overflow-x: auto;">
+
+                        <div v-for="p in pagination.pages">
+                            <button v-if="pagination.currentPage == p" type="button" class="btn btn-danger btn-sm"  @click.prevent="setPage(p)">
+
+                                <b>{{ p }}</b>
+
+                            </button> 
+                            <button v-else type="button" class="btn btn-primary btn-sm"  @click.prevent="setPage(p)">
+                                <b>{{ p }}</b>
+
+
+                            </button> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="table-bordered bg-dark">
+
+                    <table  class="table table-striped">
+
+
+                        <thead class="black white-text">
+                            <!--                          <tr >
+                                                          <th v-if="index!=='password'" v-for="(item, index) in UserList[1]" @click="sort(index)">{{index}}</th>
+
+                                                      </tr>-->
+                            <tr>
+    <!--                            <th>CRUD</th>-->
+                                <th style="cursor: pointer;" @click="sort('id')"><i class="fas fa-sort"></i>id ({{ UserCount }})</th>
+                                <th style="cursor: pointer;" @click="sort('surname')"><i class="fas fa-sort"></i> Ф.И.О.</th>
+                                <!--                          <th>middlename</th>
+                                                          <th>surname</th>-->
+                                <th style="cursor: pointer;" @click="sort('login')"><i class="fas fa-sort"></i> login</th>
+                                <th style="cursor: pointer;" @click="sort('email')"><i class="fas fa-sort"></i> e-mail</th>
+                                <th style="cursor: pointer;" @click="sort('phone')"><i class="fas fa-sort"></i> Номер телефона</th>
+                                <th style="cursor: pointer;" @click="sort('role')"><i class="fas fa-sort"></i> Уровень доступа</th>
+                                <!--                          <th>activation</th>
+                                                          <th>registredatetime</th>
+                                                          <th>lastlogin</th>-->
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr v-for="(User, index) in sortedUser" >
+    <!--                            <td>
+
+
+                                </td>-->
+                                <td>
+                                <b style="cursor: pointer;" @click="SetUserEditor(User.id)" class="text-success"><i class="fas fa-user-edit"></i></b>
+                                <b style="cursor: pointer;" @click="DelUser(User.id)" class="text-danger"><i class="fas fa-user-times"></i></b>
+                                {{ User.id }}
+                                </td>
+                                <td>{{ User.name }} {{ User.middlename }} {{ User.surname }}</td>
+                                <td>{{ User.login }}</td>
+                                <td>{{ User.email }}</td>
+                                <td>{{ User.phone }}</td>
+                                
+                                <td v-if="+User.role===+100" class="text-success">Пользователь</td>
+                                <td v-if="+User.role===+200" class="text-success">V.I.P. Пользователь</td>
+                                <td v-if="+User.role===+300" class="text-warning">Т.П.</td>
+                                <td v-if="+User.role===+900" class="text-secondary">Администратор</td>
+                                <td v-if="+User.role===+999" class="text-danger">Разработчик</td>
+                                
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+                    <!--https://www.raymondcamden.com/2018/02/08/building-table-sorting-and-pagination-in-vuejs-->
+                   
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+<script type="text/javascript">
+var UserManagement = new Vue({
+    el: '#UserManagement',
+    store,
+    data: {
+        User:{},
+        UserList:{},
+        search:'',
+        SearchObj:'',
+        SearchObjU:'',
+        SearchCam:'',
+        orderBy: '',
+        orderReverse: 1,
+        currentSort:'role',
+        currentSortDir:'asc',
+        pagination:{},
+        perPage:10,
+        currentPage:1,
+        UserCount:0,
+        UrlF:'',
+        UserEdit:false,
+        EditObj:false,
+        UserObjList:{},
+        ObjList:false,
+        EditCam:false,
+        UserCamList:{},
+        CamList:{},
+        CamListShow:false
+    },
+    created() {
+        
+        this.User = store.state.User;   
+        if(!this.ObjList){
+            fetch('/object/getall')
+                .then(res => res.json())
+                .then(res => {
+//                    console.log(res);
+                  this.ObjList = res;
+                  
+                });
+        }
+//        if(!this.CamList){
+//            fetch('/object/getall')
+//                .then(res => res.json())
+//                .then(res => {
+////                    console.log(res);
+//                  this.ObjList = res;
+//                  
+//                });
+//        }
+        fetch('/user/apilist/0/'+this.perPage)
+        .then(res => res.json())
+        .then(res => {
+//            console.log(res);
+          this.UserList = res.User;
+          this.UserCount=res.UserCount;
+          this.pagination = this.paginator(this.UserCount, this.currentPage);
+        });
+    },
+    methods : {
+        sort(s) {
+//           alert(s);
+            //if s == current sort, reverse
+            if(s === this.currentSort) {
+                this.currentSortDir = this.currentSortDir==='asc'?'desc':'asc';
+            }
+            this.currentSort = s;
+        },
+        DBSearch(){
+            this.UrlF='/user/apilist/0/'+this.perPage+'/'+this.search;
+            fetch(this.UrlF)
+                .then(res => res.json())
+                .then(res => {
+//                    console.log(res);
+                  this.UserList = res.User;
+                  if(this.search.length>0){
+                      this.UserCount = res.SCount;
+                  }else{
+                      this.UserCount=res.UserCount;
+                  }
+                  
+                  this.pagination = this.paginator(this.UserCount, this.currentPage);
+                });
+        },
+        SetUserEditor(id) {
+            if(id>0){
+                this.UserEdit=this.UserList[id];
+                this.UserEdit['password']='';
+            }else{
+                this.UserEdit={name:"",middlename:"",surname:"",login:"",email:"",phone:"","password":GeneratePassword(),"role":"100"};
+//                this.UserEdit={password:GeneratePassword(),login:'',role:100};
+            }
+            
+//            console.log(this.UserList[id]);
+        },
+        SaveUser() {
+//            console.log(this.UserEdit);
+            
+            var data = new FormData();
+            data.append( "User", JSON.stringify(this.UserEdit) );
+            fetch('/user/save/',{mode: 'cors',method: 'POST',body: data})
+                .then(res => res.json())
+                .then(res => {
+                    MsgBox(res.RetMsg);
+                });
+
+        },
+        AddUser() {
+            if(this.UserEdit.login===''){
+                MsgBox('Введите логин пользователя!');
+                return;
+            }
+            var data = new FormData();
+            data.append( "User", JSON.stringify(this.UserEdit) );
+            fetch('/user/save/true',{mode: 'cors',method: 'POST',body: data})
+                .then(res => res.json())
+                .then(res => {
+                    MsgBox(res.RetMsg);
+//                    this.UserEdit=false;
+//                    console.log(res);
+                });
+        },
+        DelUser(uid){
+            let Ulogin = _.filter(this.UserList, function(Object) {
+                return Object.id === uid;
+            });
+//            console.log(id,Ulogin);
+            if (confirm("Вы точно хотите удалить пользователя? "+Ulogin[0].login) ) {
+            fetch('/user/delete/'+uid)
+                .then(res => res.json())
+                .then(res => {
+                    MsgBox(res.RetMsg);
+                        this.UserList = _.filter(this.UserList, function(Object) {
+                            return Object.id !== uid;
+                        });
+//                    this.UserEdit=false;
+//                    console.log(res);
+                });
+                } 
+        },
+        paginator(totalItem,currentPage) {
+            var startIndex = (currentPage - 1) * this.perPage,
+                    endIndex = Math.min(startIndex + this.perPage - 1,totalItem-1);
+            let p = _.range(1,Math.ceil(totalItem/this.perPage)+1);
+            return {
+                currentPage: currentPage,
+                startIndex: startIndex,
+                endIndex:endIndex,
+                pages: p//_.slice(p,st,et)
+            };
+        },
+        setPage(p) {
+            this.currentPage=p;
+            this.pagination = this.paginator(this.UserCount, this.currentPage);
+//            console.log(this.pagination);
+            this.UrlF='/user/apilist/'+this.pagination.startIndex+'/'+this.perPage+'/'+this.search;
+            fetch(this.UrlF)
+                .then(res => res.json())
+                .then(res => {
+//                    console.log(res);
+                  this.UserList = res.User;
+                  if(this.search.length>0){
+                      this.UserCount = res.SCount;
+                  }else{
+                      this.UserCount=res.UserCount;
+                  }
+//                  this.UserCount=res.UserCount;
+                });
+        },
+        SetUserObjEdit(){
+            let self = this;
+            self.EditObj=true;
+            
+            fetch('/object/getuserobj/'+self.UserEdit.id)
+                .then(res => res.json())
+                .then(res => {
+                    self.UserObjList=res;
+//                    console.log(res);
+                });
+            fetch('/object/getall')
+                .then(res => res.json())
+                .then(res => {
+                    
+                    var tmp = res;
+                    _.each(self.UserObjList, function (itemE) {
+                        
+                        tmp = _.filter(tmp, function (item) {
+//                            console.log('ew',itemE);
+                            return item.id !== itemE.id;
+                        });
+//                        
+                            
+                    });
+                    self.ObjList =tmp;
+                    
+//                    console.log(this.ObjList);
+                });
+        },
+        SetUserCamEdit(){
+            // 7
+            this.EditCam=true;
+            fetch('/camera/getcamuser/'+this.UserEdit.id)
+                .then(res => res.json())
+                .then(res => {
+                    this.UserCamList=res;
+                    
+//                    console.log(res);
+                });
+            
+        },
+        AddUserObj(id){
+            fetch('/object/setuser/'+id+'/'+this.UserEdit.id)
+                .then(res => res.json())
+                .then(res => {
+//                    this.UserObjList=res;
+                    MsgBox(res.msg);
+//                    this.SetUserObjEdit();
+                    fetch('/object/getuserobj/'+this.UserEdit.id)
+                        .then(res => res.json())
+                        .then(res => {
+                            this.UserObjList=res;
+
+        //                    console.log(res);
+                        });
+//                    console.log(res);
+                    this.ObjList = _.filter(this.ObjList, function (item) {
+                        
+                            return item.id !== id;
+                        
+                        
+                    });
+                });
+
+        },
+        DelUserObj(id){
+            fetch('/object/deluserobj/'+id+'/'+this.UserEdit.id)
+                .then(res => res.json())
+                .then(res => {
+//                    this.UserObjList=res;
+                    this.SetUserObjEdit();
+//                    console.log(res);
+            });
+        },
+        DelUserCam(id){
+            fetch('/camera/dellcamuser/'+this.UserEdit.id+'/'+id)
+                .then(res => res.json())
+                .then(res => {
+//                    this.UserObjList=res;
+                    this.SetUserCamEdit();
+//                    console.log(res);
+            });
+        },
+        AddUserCam(id){
+            fetch('/camera/setcamuser/'+this.UserEdit.id+'/'+id)
+                .then(res => res.json())
+                .then(res => {
+//                    this.UserObjList=res;
+                    this.SetUserCamEdit();
+//                    console.log(res);
+                });
+        },
+        LoadCamObj(id){
+//            console.log(id);
+            fetch('/object/getcam/'+id)
+                .then(res => res.json())
+                .then(res => {
+        //            console.log(res);
+                    this.CamListShow=true;
+                    this.CamList = res.CameraList;
+                 
+                });
+        }
+    
+    },
+    computed:{
+        sortedUser(){
+            
+            if(this.currentSortDir==='asc'){
+                return _.sortBy(this.UserList, this.currentSort);
+            }else{
+                return _.sortBy(this.UserList, this.currentSort).reverse();
+            }
+            
+        },
+        ObjListS(){
+            var self = this;
+            if(self.SearchObj){
+                return _.filter(self.ObjList, function (item) {
+                    var strF = new RegExp(self.SearchObj,'gi');
+                    var strFn = String(item.name);
+                    var strFa = String(item.address);
+//                    console.log(item);
+                    return strFn.search(strF)>-1 || strFa.search(strF)>-1;
+                });
+            }else{
+                return this.ObjList;
+            }
+        },
+        UserObjListS(){
+            var self = this;
+            if(self.SearchObjU){
+                return _.filter(self.UserObjList, function (item) {
+                    var strF = new RegExp(self.SearchObjU,'gi');
+                    var strFn = String(item.name);
+                    var strFa = String(item.address);
+//                    console.log(item);
+                    return strFn.search(strF)>-1 || strFa.search(strF)>-1;
+                });
+            }else{
+                return this.UserObjList;
+            }
+        }
+    }
+});
+</script>

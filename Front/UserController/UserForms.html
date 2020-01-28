@@ -1,0 +1,241 @@
+<style>
+    #UserForms form{
+        width: 500px;
+        /*display: none;*/
+    }
+    .bounce-enter-active {
+        animation: bounce-in .9s;
+    }
+    .bounce-leave-active {
+        animation: bounce-in .5s reverse;
+        position: fixed;
+    }
+    @keyframes bounce-in {
+        0% {
+
+            transform: scale(0);
+        }
+        100% {
+
+            transform: scale(1);
+        }
+    }
+</style>
+
+<div id="UserForms" class="vh-100 d-flex flex-column justify-content-center align-items-center bg-dark">
+
+        <transition name="bounce" appear>
+            
+            <form class="card p-3" v-show="state==='Login'" @submit="UserLogin" id="formlogin"  role="form" method="POST" action="/user/login">
+                <!--Header-->
+                <div class="form-header d-flex justify-content-center">
+                    <h3><i class="fa fa-lock"></i> Вход пользователя:</h3>
+                </div>
+
+                <!--Body-->
+                <div class="md-form">
+                    <i class="fa fa-envelope prefix grey-text"></i>
+                    <input v-model="CurrentUser.email" value="<{email}>" name="email" type="text" id="defaultForm-email" class="form-control" required>
+                    <label for="defaultForm-email" class="">Адрес электронной почты или логин</label>
+                </div>
+
+                <div class="md-form">
+                    <i class="fa fa-lock prefix grey-text"></i>
+                    <input v-model="CurrentUser.password" name="password" id="defaultForm-pass" type="password" class="form-control" required>
+                    <label for="defaultForm-pass" class="">Ваш пароль</label>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-default waves-effect waves-light">Войти</button>
+                </div>
+                <div v-if="Forgot" class="modal-footer mt-4">
+                    <div class="options">
+
+                        <p>У вас нет учетной записи?
+                            <a @click.prevent="SetState('Registre')" href="/user/registre">Зарегистрируйтесь</a>
+                        </p>
+                        <!--<p>Забыли свой <a href="/user/forgot">пароль</a>?</p>-->
+                    </div>
+
+                </div>
+                
+                
+            </form>
+
+        </transition>
+        
+        <transition name="bounce" appear>
+            
+            <form class="card p-3" v-show="state==='Registre'" @submit="UserRegistre" id="formreg" method="post" name="formreg" action="/user/registre">
+                
+                    <!--Header-->
+                    <div class="form-header d-flex justify-content-center">
+                        <h3><i class="fa fa-user"></i> Регистрация:</h3>
+                    </div>
+                    <!--Body-->
+                    <div class="md-form">
+                        <i class="fa fa-user prefix grey-text"></i>
+                        <input v-model="CurrentUser.login" id="orangeForm-name" name="login" type="text" class="form-control" required>
+                        <label for="orangeForm-name">Ваш логин</label>
+                    </div>
+                    <div class="md-form">
+                        <i class="fa fa-envelope prefix grey-text"></i>
+                        <input v-model="CurrentUser.email" name="email" id="orangeForm-email" type="email" class="form-control" required>
+                        <label for="orangeForm-email">Адрес электронной почты</label>
+                    </div>
+
+                    <div class="md-form">
+                        <i class="fa fa-lock prefix grey-text"></i>
+                        <input v-model="CurrentUser.password" name="password" id="orangeForm-pass" type="password" class="form-control" required>
+                        <label for="orangeForm-pass">Ваш пароль</label>
+                    </div>
+
+                    <div class="md-form">
+                        <i class="fa fa-lock prefix grey-text"></i>
+
+                        <input v-model="CurrentUser.fpassword" name="passwordonf" id="orangeForm-passwordonf" type="password" class="form-control" required>
+                        <label for="orangeForm-passwordonf">Ваш пароль еще раз</label>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-deep-orange waves-effect waves-light">Зарегистрироватся</button>
+
+                    </div>
+                    <div class="modal-footer mt-4">
+                        <div class="options">
+
+                            <p>У вас есть учетная запись?
+                                <a @click.prevent="SetState('Login')" href="/user/registre">вход</a>
+                            </p>
+                            <!--<p>Забыли свой <a href="/user/forgot">пароль</a>?</p>-->
+                        </div>
+                    </div>
+            </form>
+            
+        </transition>
+
+    <transition name="bounce" appear>
+    <div v-if="errors" class="card p-3 alert-danger position-fixed">
+        <div class="d-flex justify-content-between">
+            <h5 class="alert-heading mr-5">Что-то пошло нетак!</h5>
+            <button @click="SetError(false)" type="button" class="close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            
+        </div>
+        <!--<hr>-->
+        <p class="mb-0">{{errors}}</p>
+
+    </div>
+    </transition>
+</div>
+
+<script type="text/javascript">
+var UserForms = new Vue({
+  el: '#UserForms',
+  data: {
+      errors:false,Forgot:1,
+      CurrentUser: {login:"",email:"",password:"",fpassword:""},
+      state:'<{state}>',defstate:'<{state}>',msg:''
+  },
+  created(){
+    let self = this;
+    window.onpopstate = function(event) {
+        if(event.state!=null){
+            self.state =event.state;
+        }
+        console.log(event.state);
+    };
+  },
+  methods: {
+    SetState(state){
+        this.defstate=state;
+        this.state=state;
+        window.history.pushState(state, "Title", "/user/"+state.toLowerCase());
+    },
+    SetError(err){
+        this.errors=err;
+        this.state=this.defstate;
+    },
+    UserRegistre(e){
+        e.preventDefault();
+        this.errors=false;
+        this.state=false;
+        if(this.CurrentUser.password!==this.CurrentUser.fpassword){
+            this.errors = "В веденные пароли не совпадают";
+            this.state='error';
+            return false;
+        }
+        fetch( '/user/registre',{
+            mode: 'cors',
+            method: 'POST',
+            body: JSON.stringify(this.CurrentUser)
+            })
+            .then((response) => {
+                
+                if(response.redirected){
+                    window.location.href=response.url;
+                    return false;
+                }
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Network response was not ok');
+            })
+            .then((json) => {
+                if(json.Error){
+                    this.errors = json.Error;
+                    this.state='error';
+                }else if(json.Success!==0){
+                    console.log(json);
+                    window.location.href='/user';
+                }
+   
+//                console.log(json);
+                
+            })
+            .catch((error) => {
+                this.errors = error;
+                console.log('FormLogin',error);
+            });
+//        console.log(this.CurrentUser);
+    },
+    UserLogin(e) {
+        e.preventDefault();
+        this.errors=false;
+        this.state=false;
+        var SendUser = {email:this.CurrentUser.email,password:this.CurrentUser.password};
+        fetch( '/user/login',{
+            mode: 'cors',
+            method: 'POST',
+            body: JSON.stringify(SendUser)
+            })
+            .then((response) => {
+                
+                if(response.redirected){
+                    window.location.href=response.url;
+                    return false;
+                }
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Network response was not ok');
+            })
+            .then((json) => {
+                if(json){
+                    window.location.href='/user';
+                }else{
+                    this.CurrentUser.email='';
+                    this.CurrentUser.password='';
+                    this.Forgot=true;
+                    this.errors = 'Неверное имя пользователя или пароль';
+                    this.state='error';
+                }
+            })
+            .catch((error) => {
+                this.errors =error;
+                console.log('Login',error);
+            });
+        } 
+    }
+});
+</script>

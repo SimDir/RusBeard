@@ -1,0 +1,20 @@
+<div id="UserSet">
+  Привет {{ User.name }}. данный раздел в разработке
+</div>
+
+
+<script type="text/javascript">
+var UserSet = new Vue({
+    el: '#UserSet',
+    store,
+    data: {
+        User:{},
+        UserList:{}
+    },
+    created() {
+            this.User =store.state.User;
+            
+    }
+})
+
+</script>
