@@ -23,7 +23,33 @@
 </style>
 
 <div id="UserForms" class="vh-100 d-flex flex-column justify-content-center align-items-center bg-dark">
+<!--    <div id="vk_api_transport"></div>
+    <script type="text/javascript">
+      window.vkAsyncInit = function() {
+        VK.init({
+          apiId: 5517433
+        });
+        VK.Auth.login(function(response) {
+        if (response.session) {
+            console.log(response);
+            /* Пользователь успешно авторизовался */
+            if (response.settings) {
+              /* Выбранные настройки доступа пользователя, если они были запрошены */
+            }
+          } else {
+            /* Пользователь нажал кнопку Отмена в окне авторизации */
+          }
+        });
+      };
 
+      setTimeout(function() {
+        var el = document.createElement("script");
+        el.type = "text/javascript";
+        el.src = "https://vk.com/js/api/openapi.js?166";
+        el.async = true;
+        document.getElementById("UserForms").appendChild(el);
+      }, 0);
+    </script>-->
         <transition name="bounce" appear>
             
             <form class="card p-3" v-show="state==='Login'" @submit="UserLogin" id="formlogin"  role="form" method="POST" action="/user/login">

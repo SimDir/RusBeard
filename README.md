@@ -1,4 +1,6 @@
-# mvcRB - Model View Controller **Rus Beard**
+# mvcRB - Model View Controller **Rus Beard** 
+
+пример как работает мастер ветка тут http://rrdev.ru/
 
 ## Используйте `Git` для установки
 
