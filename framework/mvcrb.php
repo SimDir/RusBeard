@@ -9,7 +9,8 @@ defined('ROOT') OR die('No direct script access.');
  * 
  */
 function dd($str) {
-    var_dump($str);
+    dump($str);
+//    var_dump($str);
     die();
 }
 
