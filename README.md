@@ -6,15 +6,15 @@
 
 Запустите терминал и выполните следующие `Git` команды для установки:
 ```
-git clone https://github.com/SimDir/mvcrb.git
+git clone https://github.com/SimDir/RusBeard.git
 ```
 или если у вас есть доступ по **ssh**
 ```
-git clone git@github.com:SimDir/mvcrb.git
+git clone git@github.com:SimDir/RusBeard.git
 ```
 Далее перейдите в каталог с только что склонированным проектом
 ```
-cd mvcrb
+cd RusBeard
 ```
 Далее установите бибилиотеки зависимостей используемые в проекте
 ```
